@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0d1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Incidencias LPN · eDarkstore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d1117;
+  --surface:#161b22;
+  --surface2:#1c2128;
+  --border:#30363d;
+  --teal:#3bbfb8;
+  --teal-dim:#1a4a47;
+  --teal-glow:rgba(59,191,184,0.12);
+  --text:#e6edf3;
+  --text2:#7d8590;
+  --text3:#484f58;
+  --danger:#f85149;
+  --warning:#e3b341;
+  --success:#3fb950;
+  --radius:10px;
+  --font-display:'Barlow Condensed',sans-serif;
+  --font-body:'Barlow',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;overscroll-behavior:none}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;height:52px;
+}
+.nav-brand{font-family:var(--font-display);font-size:20px;font-weight:700;letter-spacing:.5px;color:var(--teal)}
+.nav-brand span{color:var(--text2);font-weight:400}
+.nav-tabs{display:flex;gap:4px}
+.tab-btn{
+  background:none;border:none;color:var(--text2);
+  font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+  padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .15s;
+}
+.tab-btn.active{background:var(--teal-glow);color:var(--teal)}
+.tab-btn:hover:not(.active){background:var(--surface2);color:var(--text)}
+
+/* MAIN */
+main{padding:68px 16px 24px;max-width:600px;margin:0 auto}
+
+/* FORM */
+.form-section{margin-bottom:20px}
+.form-label{
+  display:block;font-family:var(--font-display);font-size:12px;font-weight:600;
+  letter-spacing:.8px;text-transform:uppercase;color:var(--text2);margin-bottom:6px;
+}
+.form-label .req{color:var(--teal);margin-left:2px}
+input[type=text],select,textarea{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);color:var(--text);font-family:var(--font-body);font-size:15px;
+  padding:10px 14px;outline:none;transition:border-color .15s;
+  -webkit-appearance:none;
+}
+input[type=text]:focus,select:focus,textarea:focus{border-color:var(--teal)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237d8590' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+textarea{resize:vertical;min-height:80px;line-height:1.5}
+select option{background:var(--surface2)}
+
+/* PHOTO */
+.photo-zone{
+  border:1.5px dashed var(--border);border-radius:var(--radius);
+  padding:16px;text-align:center;cursor:pointer;transition:border-color .15s;
+  background:var(--surface);
+}
+.photo-zone:hover,.photo-zone.drag{border-color:var(--teal);background:var(--teal-glow)}
+.photo-zone input{display:none}
+.photo-icon{font-size:28px;margin-bottom:6px;color:var(--text2)}
+.photo-hint{font-size:13px;color:var(--text2);line-height:1.5}
+.photo-hint strong{color:var(--teal);display:block;margin-bottom:4px;font-family:var(--font-display);font-size:14px;letter-spacing:.3px}
+
+/* REMINDER BOX */
+.reminder{
+  background:rgba(227,179,65,.07);border:1px solid rgba(227,179,65,.25);
+  border-radius:var(--radius);padding:12px 14px;margin-top:10px;
+}
+.reminder-title{font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--warning);margin-bottom:6px}
+.reminder ul{list-style:none;padding:0}
+.reminder ul li{font-size:13px;color:var(--text);padding:2px 0;padding-left:14px;position:relative}
+.reminder ul li::before{content:'›';position:absolute;left:0;color:var(--warning)}
+
+/* PREVIEW GRID */
+.preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.preview-item{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.preview-item img{width:100%;height:100%;object-fit:cover}
+.preview-item .remove-photo{
+  position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;
+  background:rgba(0,0,0,.7);border:none;color:#fff;font-size:12px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+
+/* SUBMIT */
+.btn-submit{
+  width:100%;background:var(--teal);color:#0d1117;
+  font-family:var(--font-display);font-size:18px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  border:none;border-radius:var(--radius);padding:14px;cursor:pointer;
+  transition:opacity .15s,transform .1s;margin-top:8px;
+}
+.btn-submit:hover{opacity:.9}
+.btn-submit:active{transform:scale(.98)}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:12px 20px;font-size:14px;white-space:nowrap;transition:transform .3s ease;z-index:999;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--success);color:var(--success)}
+.toast.err{border-color:var(--danger);color:var(--danger)}
+
+/* HISTORIAL */
+#view-historial{display:none}
+.hist-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.hist-title{font-family:var(--font-display);font-size:22px;font-weight:700}
+.hist-count{font-size:13px;color:var(--text2);font-family:var(--font-mono)}
+.record-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px;margin-bottom:10px;
+}
+.record-card:hover{border-color:var(--teal)}
+.record-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.record-lpn{font-family:var(--font-mono);font-size:16px;font-weight:500;color:var(--teal)}
+.record-date{font-size:11px;color:var(--text3);font-family:var(--font-mono);text-align:right}
+.record-marca{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;font-family:var(--font-display);background:var(--teal-dim);color:var(--teal);padding:2px 8px;border-radius:4px;margin-bottom:8px}
+.record-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+.record-field label{font-size:11px;color:var(--text2);font-family:var(--font-display);letter-spacing:.5px;text-transform:uppercase}
+.record-field p{font-size:14px;color:var(--text);margin-top:2px}
+.record-diff{font-size:13px;color:var(--text2);font-style:italic;margin-top:4px}
+.record-operario{font-size:12px;color:var(--text3);margin-top:6px;font-family:var(--font-mono)}
+.thumb-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.thumb-row img{width:56px;height:56px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer}
+.empty-state{text-align:center;padding:48px 0;color:var(--text2)}
+.empty-state .empty-icon{font-size:36px;margin-bottom:12px;opacity:.4}
+.empty-state p{font-size:14px}
+
+/* SPINNER */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,.3);border-top-color:#0d1117;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* CONFIG BANNER */
+.config-banner{
+  background:rgba(248,81,73,.07);border:1px solid rgba(248,81,73,.3);
+  border-radius:var(--radius);padding:12px 14px;margin-bottom:20px;font-size:13px;color:var(--text2);
+}
+.config-banner strong{color:var(--danger);display:block;margin-bottom:4px;font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+
+/* LIGHTBOX */
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:200;display:none;align-items:center;justify-content:center}
+#lightbox.open{display:flex}
+#lightbox img{max-width:90vw;max-height:90vh;border-radius:8px}
+#lightbox-close{position:absolute;top:16px;right:16px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer}
+
+/* MODAL IMAGEN */
+.img-fullview{cursor:zoom-in}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">eDS <span>· LPN Incidencias</span></div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" id="btn-form" onclick="showView('form')">Registrar</button>
+    <button class="tab-btn" id="btn-hist" onclick="showView('historial')">Historial</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- VISTA FORMULARIO -->
+<div id="view-form">
+
+  <div class="config-banner" id="config-warn" style="display:none">
+    <strong>⚠ Sin configurar</strong>
+    Edita el archivo y reemplaza <code>SCRIPT_URL</code> con la URL de tu Google Apps Script para activar el guardado.
+  </div>
+
+  <!-- LPN -->
+  <div class="form-section">
+    <label class="form-label">LPN<span class="req">*</span></label>
+    <input type="text" id="f-lpn" placeholder="ej: LPN00123" autocomplete="off" autocapitalize="characters">
+  </div>
+
+  <!-- MARCA -->
+  <div class="form-section">
+    <label class="form-label">Marca<span class="req">*</span></label>
+    <select id="f-marca">
+      <option value="">— seleccionar —</option>
+      <option>Wild Lama</option>
+      <option>Casa Nativa</option>
+      <option>Railú SPA</option>
+      <option>Bauza</option>
+      <option>Happy Mom</option>
+      <option>Unbranded B2B</option>
+      <option>Waterdrop</option>
+      <option>Gaucha</option>
+      <option>Jockey</option>
+      <option>Joyfitters</option>
+      <option>Zadig & Voltaire</option>
+    </select>
+  </div>
+
+  <!-- SKU DECLARADO -->
+  <div class="form-section">
+    <label class="form-label">SKU / Producto declarado<span class="req">*</span></label>
+    <input type="text" id="f-sku-dec" placeholder="Lo que decía el sistema o la caja" autocomplete="off">
+  </div>
+
+  <!-- SKU REAL -->
+  <div class="form-section">
+    <label class="form-label">SKU / Producto real<span class="req">*</span></label>
+    <input type="text" id="f-sku-real" placeholder="Lo que había físicamente" autocomplete="off">
+  </div>
+
+  <!-- DIFERENCIA -->
+  <div class="form-section">
+    <label class="form-label">Diferencia detectada<span class="req">*</span></label>
+    <input type="text" id="f-diff" placeholder="ej: Talla XS en vez de L · color azul en vez de verde" autocomplete="off">
+  </div>
+
+  <!-- OPERARIO -->
+  <div class="form-section">
+    <label class="form-label">Operario que detectó<span class="req">*</span></label>
+    <input type="text" id="f-op" placeholder="Nombre del operario" autocomplete="off" autocapitalize="words">
+  </div>
+
+  <!-- OBSERVACIONES -->
+  <div class="form-section">
+    <label class="form-label">Observaciones</label>
+    <textarea id="f-obs" placeholder="Información adicional relevante..."></textarea>
+  </div>
+
+  <!-- FOTOS -->
+  <div class="form-section">
+    <label class="form-label">Evidencia fotográfica</label>
+    <div class="photo-zone" id="photo-zone" onclick="document.getElementById('photo-input').click()">
+      <input type="file" id="photo-input" accept="image/*" multiple capture="environment">
+      <div class="photo-icon">📷</div>
+      <div class="photo-hint">
+        <strong>Toca para abrir cámara o galería</strong>
+        Puedes subir varias fotos
+      </div>
+    </div>
+    <div class="reminder">
+      <div class="reminder-title">📌 La foto debe incluir idealmente:</div>
+      <ul>
+        <li>LPN visible en la caja</li>
+        <li>SKU declarado en la caja</li>
+        <li>Etiqueta de la prenda real</li>
+        <li>DUN (código de barras del producto)</li>
+      </ul>
+    </div>
+    <div class="preview-grid" id="preview-grid"></div>
+  </div>
+
+  <button class="btn-submit" id="btn-submit" onclick="submitForm()">Registrar incidencia</button>
+</div>
+
+<!-- VISTA HISTORIAL -->
+<div id="view-historial">
+  <div class="hist-header">
+    <div class="hist-title">Historial</div>
+    <div class="hist-count" id="hist-count">— registros</div>
+  </div>
+  <div id="hist-list"></div>
+</div>
+
+</main>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="evidencia">
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIGURACIÓN ────────────────────────────────────────────────
+// Reemplaza esta URL con la URL de tu Google Apps Script desplegado
+const SCRIPT_URL = 'TU_SCRIPT_URL_AQUI';
+// ─────────────────────────────────────────────────────────────────
+
+const isConfigured = SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbzRu1e1WJ4_Q23plB2RJZehkGADjBg8_NvMc6DqPpvaRYw9--KFfObck12BT8xAdsfSWw/exec';
+if (!isConfigured) document.getElementById('config-warn').style.display = 'block';
+
+let photos = [];
+let records = JSON.parse(localStorage.getItem('lpn_records') || '[]');
+
+// TABS
+function showView(v) {
+  document.getElementById('view-form').style.display = v === 'form' ? 'block' : 'none';
+  document.getElementById('view-historial').style.display = v === 'historial' ? 'block' : 'none';
+  document.getElementById('btn-form').className = 'tab-btn' + (v === 'form' ? ' active' : '');
+  document.getElementById('btn-hist').className = 'tab-btn' + (v === 'historial' ? ' active' : '');
+  if (v === 'historial') renderHistorial();
+}
+
+// FOTOS
+document.getElementById('photo-input').addEventListener('change', e => {
+  [...e.target.files].forEach(f => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      photos.push({data: ev.target.result, name: f.name});
+      renderPreviews();
+    };
+    reader.readAsDataURL(f);
+  });
+  e.target.value = '';
+});
+
+function renderPreviews() {
+  const grid = document.getElementById('preview-grid');
+  grid.innerHTML = photos.map((p, i) =>
+    `<div class="preview-item">
+      <img src="${p.data}" alt="foto ${i+1}" onclick="openLightbox('${p.data}')">
+      <button class="remove-photo" onclick="removePhoto(${i})">✕</button>
+    </div>`
+  ).join('');
+}
+
+function removePhoto(i) {
+  photos.splice(i, 1);
+  renderPreviews();
+}
+
+// LIGHTBOX
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+// TOAST
+function toast(msg, type = 'ok', dur = 3000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast ${type} show`;
+  setTimeout(() => el.className = 'toast', dur);
+}
+
+// VALIDAR
+function validate() {
+  const fields = [
+    {id: 'f-lpn', label: 'LPN'},
+    {id: 'f-marca', label: 'Marca'},
+    {id: 'f-sku-dec', label: 'SKU declarado'},
+    {id: 'f-sku-real', label: 'SKU real'},
+    {id: 'f-diff', label: 'Diferencia'},
+    {id: 'f-op', label: 'Operario'},
+  ];
+  for (const f of fields) {
+    const val = document.getElementById(f.id).value.trim();
+    if (!val) {
+      toast(`Campo requerido: ${f.label}`, 'err');
+      document.getElementById(f.id).focus();
+      return false;
+    }
+  }
+  return true;
+}
+
+// SUBMIT
+async function submitForm() {
+  if (!validate()) return;
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Enviando...';
+
+  const record = {
+    id: Date.now(),
+    timestamp: new Date().toLocaleString('es-CL'),
+    lpn: document.getElementById('f-lpn').value.trim().toUpperCase(),
+    marca: document.getElementById('f-marca').value,
+    skuDec: document.getElementById('f-sku-dec').value.trim(),
+    skuReal: document.getElementById('f-sku-real').value.trim(),
+    diferencia: document.getElementById('f-diff').value.trim(),
+    operario: document.getElementById('f-op').value.trim(),
+    obs: document.getElementById('f-obs').value.trim(),
+    photos: photos.map(p => p.data),
+  };
+
+  // Guardar local siempre
+  records.unshift(record);
+  localStorage.setItem('lpn_records', JSON.stringify(records.slice(0, 200)));
+
+  if (isConfigured) {
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(record),
+      });
+      toast('✓ Incidencia registrada correctamente', 'ok');
+    } catch (e) {
+      toast('⚠ Guardado solo local (sin conexión al servidor)', 'err', 5000);
+    }
+  } else {
+    toast('✓ Guardado localmente (configurar SCRIPT_URL para sincronizar)', 'ok', 4000);
+  }
+
+  resetForm();
+  btn.disabled = false;
+  btn.innerHTML = 'Registrar incidencia';
+}
+
+function resetForm() {
+  ['f-lpn','f-marca','f-sku-dec','f-sku-real','f-diff','f-op','f-obs'].forEach(id => {
+    const el = document.getElementById(id);
+    el.tagName === 'SELECT' ? el.selectedIndex = 0 : el.value = '';
+  });
+  photos = [];
+  renderPreviews();
+}
+
+// HISTORIAL
+function renderHistorial() {
+  const list = document.getElementById('hist-list');
+  document.getElementById('hist-count').textContent = `${records.length} registros`;
+
+  if (!records.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>No hay incidencias registradas aún.</p></div>`;
+    return;
+  }
+
+  list.innerHTML = records.map(r => `
+    <div class="record-card">
+      <div class="record-top">
+        <div class="record-lpn">${r.lpn}</div>
+        <div class="record-date">${r.timestamp}</div>
+      </div>
+      <div class="record-marca">${r.marca}</div>
+      <div class="record-row">
+        <div class="record-field">
+          <label>Declarado</label>
+          <p>${r.skuDec}</p>
+        </div>
+        <div class="record-field">
+          <label>Real</label>
+          <p>${r.skuReal}</p>
+        </div>
+      </div>
+      <div class="record-diff">↳ ${r.diferencia}</div>
+      ${r.obs ? `<div class="record-diff" style="margin-top:4px;color:#7d8590">${r.obs}</div>` : ''}
+      <div class="record-operario">Detectado por: ${r.operario}</div>
+      ${r.photos && r.photos.length ? `
+        <div class="thumb-row">
+          ${r.photos.map(p => `<img src="${p}" alt="evidencia" onclick="openLightbox('${p}')" class="img-fullview">`).join('')}
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+</script>
+</body>
+</html>
