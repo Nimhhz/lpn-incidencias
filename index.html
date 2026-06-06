@@ -327,7 +327,14 @@ function confirmScan() {
   }
   closeScanner();
 }
-
+function retryScanner() {
+  lastScanned = null;
+  document.getElementById('scanner-result').className = 'scanner-result';
+  document.getElementById('scanner-result-text').textContent = '';
+  document.getElementById('scanner-result-match').textContent = '';
+  document.getElementById('scanner-hint').textContent = 'Apunta al código de barras y mantén estable';
+  startQuagga();
+}
 function startQuagga() {
   if (scannerActive) return;
   const container = document.getElementById('quagga-container');
