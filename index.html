@@ -403,20 +403,22 @@ async function submitForm() {
   records.unshift(record);
   localStorage.setItem('lpn_records', JSON.stringify(records.slice(0, 200)));
 
-  if (isConfigured) {
-    try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify(record),
-      });
-      toast('✓ Incidencia registrada correctamente', 'ok');
-    } catch (e) {
-      toast('⚠ Guardado solo local (sin conexión al servidor)', 'err', 5000);
-    }
-  } else {
-    toast('✓ Guardado localmente (configurar SCRIPT_URL para sincronizar)', 'ok', 4000);
+if (isConfigured) {
+  try {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(record));
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData,
+    });
+    toast('✓ Incidencia registrada correctamente', 'ok');
+  } catch (e) {
+    toast('⚠ Guardado solo local (sin conexión al servidor)', 'err', 5000);
   }
+} else {
+  toast('✓ Guardado localmente (configurar SCRIPT_URL para sincronizar)', 'ok', 4000);
+}
 
   resetForm();
   btn.disabled = false;
