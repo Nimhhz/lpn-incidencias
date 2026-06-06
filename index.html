@@ -332,7 +332,9 @@ function startQuagga() {
   if (scannerActive) return;
   const container = document.getElementById('quagga-container');
   container.innerHTML = '';
-  
+  let lastCode = null;
+  let streak = 0;
+
   Quagga.init({
     inputStream: {
       name: 'Live',
@@ -363,10 +365,21 @@ function startQuagga() {
   Quagga.onDetected(result => {
     const code = result.codeResult.code;
     if (!code) return;
-    lastScanned = code;
-    document.getElementById('scanner-result-text').textContent = code;
-    document.getElementById('scanner-result').className = 'scanner-result show';
-    document.getElementById('scanner-hint').textContent = '✓ Código detectado — toca "Usar" para confirmar';
+
+    if (code === lastCode) {
+      streak++;
+    } else {
+      lastCode = code;
+      streak = 1;
+    }
+
+    if (streak >= 3) {
+      stopQuagga();
+      lastScanned = code;
+      document.getElementById('scanner-result-text').textContent = code;
+      document.getElementById('scanner-result').className = 'scanner-result show';
+      document.getElementById('scanner-hint').textContent = '✓ Código detectado — toca "Usar" para confirmar';
+    }
   });
 }
 
