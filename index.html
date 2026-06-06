@@ -33,13 +33,70 @@ main{padding:68px 16px 24px;max-width:600px;margin:0 auto}
 .form-section{margin-bottom:20px}
 .form-label{display:block;font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text2);margin-bottom:6px;}
 .form-label .req{color:var(--teal);margin-left:2px}
+
+/* INPUT CON SCANNER */
+.input-scan-wrap{display:flex;gap:8px;align-items:center}
+.input-scan-wrap input{flex:1}
+.btn-scan{
+  background:var(--teal-dim);border:1px solid var(--teal);border-radius:var(--radius);
+  color:var(--teal);font-size:20px;width:44px;height:44px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s;
+}
+.btn-scan:hover{background:var(--teal-glow)}
+
 input[type=text],select,textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--font-body);font-size:15px;padding:10px 14px;outline:none;transition:border-color .15s;-webkit-appearance:none;}
 input[type=text]:focus,select:focus,textarea:focus{border-color:var(--teal)}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237d8590' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 textarea{resize:vertical;min-height:80px;line-height:1.5}
 select option{background:var(--surface2)}
+
+/* SCANNER MODAL */
+#scanner-modal{
+  position:fixed;inset:0;z-index:300;background:#000;
+  display:none;flex-direction:column;
+}
+#scanner-modal.open{display:flex}
+#scanner-header{
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,0,0,0.8);
+}
+#scanner-title{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--teal);letter-spacing:.5px;text-transform:uppercase}
+#scanner-close{background:none;border:none;color:var(--text2);font-size:24px;cursor:pointer;padding:4px}
+#scanner-viewport{flex:1;position:relative;overflow:hidden}
+#scanner-viewport video{width:100%;height:100%;object-fit:cover}
+#scanner-viewport canvas{display:none}
+.scanner-overlay{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;
+}
+.scanner-frame{
+  width:80%;max-width:320px;height:120px;
+  border:2px solid var(--teal);border-radius:8px;
+  box-shadow:0 0 0 9999px rgba(0,0,0,0.5);
+  position:relative;
+}
+.scanner-line{
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--teal);animation:scan-line 2s ease-in-out infinite;
+}
+@keyframes scan-line{0%{top:0}50%{top:calc(100% - 2px)}100%{top:0}}
+#scanner-hint{
+  padding:16px;text-align:center;font-size:13px;color:var(--text2);
+  background:rgba(0,0,0,0.8);font-family:var(--font-display);letter-spacing:.3px;
+}
+#scanner-result{
+  padding:12px 16px;background:var(--teal-dim);border-top:1px solid var(--teal);
+  display:none;align-items:center;justify-content:space-between;gap:12px;
+}
+#scanner-result.show{display:flex}
+#scanner-result-text{font-family:var(--font-mono);font-size:14px;color:var(--teal);flex:1;word-break:break-all}
+#scanner-confirm{
+  background:var(--teal);color:#0d1117;border:none;border-radius:6px;
+  padding:8px 16px;font-family:var(--font-display);font-size:14px;font-weight:700;
+  letter-spacing:.3px;text-transform:uppercase;cursor:pointer;white-space:nowrap;
+}
+
 .photo-zone{border:1.5px dashed var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;transition:border-color .15s;background:var(--surface);}
-.photo-zone:hover,.photo-zone.drag{border-color:var(--teal);background:var(--teal-glow)}
+.photo-zone:hover{border-color:var(--teal);background:var(--teal-glow)}
 .photo-zone input{display:none}
 .photo-icon{font-size:28px;margin-bottom:6px;color:var(--text2)}
 .photo-hint{font-size:13px;color:var(--text2);line-height:1.5}
@@ -109,7 +166,10 @@ select option{background:var(--surface2)}
 
   <div class="form-section">
     <label class="form-label">LPN<span class="req">*</span></label>
-    <input type="text" id="f-lpn" placeholder="ej: LPN00123" autocomplete="off" autocapitalize="characters">
+    <div class="input-scan-wrap">
+      <input type="text" id="f-lpn" placeholder="ej: LPN00123" autocomplete="off" autocapitalize="characters">
+      <button class="btn-scan" onclick="openScanner('f-lpn')" title="Escanear código">▦</button>
+    </div>
   </div>
 
   <div class="form-section">
@@ -132,12 +192,18 @@ select option{background:var(--surface2)}
 
   <div class="form-section">
     <label class="form-label">SKU / Producto declarado<span class="req">*</span></label>
-    <input type="text" id="f-sku-dec" placeholder="Lo que decía el sistema o la caja" autocomplete="off">
+    <div class="input-scan-wrap">
+      <input type="text" id="f-sku-dec" placeholder="Lo que decía el sistema o la caja" autocomplete="off">
+      <button class="btn-scan" onclick="openScanner('f-sku-dec')" title="Escanear código">▦</button>
+    </div>
   </div>
 
   <div class="form-section">
     <label class="form-label">SKU / Producto real<span class="req">*</span></label>
-    <input type="text" id="f-sku-real" placeholder="Lo que había físicamente" autocomplete="off">
+    <div class="input-scan-wrap">
+      <input type="text" id="f-sku-real" placeholder="Lo que había físicamente" autocomplete="off">
+      <button class="btn-scan" onclick="openScanner('f-sku-real')" title="Escanear código">▦</button>
+    </div>
   </div>
 
   <div class="form-section">
@@ -192,19 +258,45 @@ select option{background:var(--surface2)}
 </div>
 </main>
 
+<!-- SCANNER MODAL -->
+<div id="scanner-modal">
+  <div id="scanner-header">
+    <div id="scanner-title">Escanear código</div>
+    <button id="scanner-close" onclick="closeScanner()">✕</button>
+  </div>
+  <div id="scanner-viewport">
+    <div id="quagga-container"></div>
+    <div class="scanner-overlay">
+      <div class="scanner-frame">
+        <div class="scanner-line"></div>
+      </div>
+    </div>
+  </div>
+  <div id="scanner-hint">Apunta al código de barras y mantén estable</div>
+  <div id="scanner-result">
+    <div id="scanner-result-text"></div>
+    <button id="scanner-confirm" onclick="confirmScan()">Usar</button>
+  </div>
+</div>
+
 <div id="lightbox" onclick="closeLightbox()">
   <button id="lightbox-close" onclick="closeLightbox()">✕</button>
   <img id="lightbox-img" src="" alt="evidencia">
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRu1e1WJ4_Q23plB2RJZehkGADjBg8_NvMc6DqPpvaRYw9--KFfObck12BT8xAdsfSWw/exec';
 const PHOTOS_URL = 'https://script.google.com/macros/s/AKfycbzKaCfvMIRw_5ovjHTiSXAOSy7wwpKEdL-E8fTrqWKoJCgfDd58QaYOdfUpYxc_kwYs/exec';
 
 let photos = [];
 let records = JSON.parse(localStorage.getItem('lpn_records') || '[]');
+let scanTarget = null;
+let lastScanned = null;
+let scannerActive = false;
 
+// ── TABS ──
 function showView(v) {
   document.getElementById('view-form').style.display = v === 'form' ? 'block' : 'none';
   document.getElementById('view-historial').style.display = v === 'historial' ? 'block' : 'none';
@@ -213,6 +305,79 @@ function showView(v) {
   if (v === 'historial') renderHistorial();
 }
 
+// ── SCANNER ──
+function openScanner(targetId) {
+  scanTarget = targetId;
+  lastScanned = null;
+  document.getElementById('scanner-result').className = 'scanner-result';
+  document.getElementById('scanner-result-text').textContent = '';
+  document.getElementById('scanner-modal').classList.add('open');
+  startQuagga();
+}
+
+function closeScanner() {
+  stopQuagga();
+  document.getElementById('scanner-modal').classList.remove('open');
+  scanTarget = null;
+}
+
+function confirmScan() {
+  if (lastScanned && scanTarget) {
+    document.getElementById(scanTarget).value = lastScanned;
+  }
+  closeScanner();
+}
+
+function startQuagga() {
+  if (scannerActive) return;
+  const container = document.getElementById('quagga-container');
+  container.innerHTML = '';
+  
+  Quagga.init({
+    inputStream: {
+      name: 'Live',
+      type: 'LiveStream',
+      target: container,
+      constraints: {
+        facingMode: 'environment',
+        width: {ideal: 1280},
+        height: {ideal: 720},
+      },
+    },
+    decoder: {
+      readers: ['code_128_reader','ean_reader','ean_8_reader','code_39_reader','upc_reader','upc_e_reader'],
+    },
+    locate: true,
+    frequency: 5,
+  }, err => {
+    if (err) {
+      toast('No se pudo acceder a la cámara', 'err');
+      closeScanner();
+      return;
+    }
+    Quagga.start();
+    scannerActive = true;
+  });
+
+  Quagga.offDetected();
+  Quagga.onDetected(result => {
+    const code = result.codeResult.code;
+    if (!code) return;
+    lastScanned = code;
+    document.getElementById('scanner-result-text').textContent = code;
+    document.getElementById('scanner-result').className = 'scanner-result show';
+    document.getElementById('scanner-hint').textContent = '✓ Código detectado — toca "Usar" para confirmar';
+  });
+}
+
+function stopQuagga() {
+  if (!scannerActive) return;
+  try { Quagga.stop(); } catch(e) {}
+  scannerActive = false;
+  document.getElementById('quagga-container').innerHTML = '';
+}
+
+// ── FOTOS ──
 document.getElementById('photo-input').addEventListener('change', e => {
   [...e.target.files].forEach(f => {
     const reader = new FileReader();
@@ -296,20 +461,13 @@ async function uploadPhoto(photoData, filename, index, total) {
   try {
     const formData = new FormData();
     formData.append('data', JSON.stringify({base64, mimeType, filename}));
-    await fetch(PHOTOS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: formData,
-    });
+    await fetch(PHOTOS_URL, {method:'POST', mode:'no-cors', body: formData});
     return 'subida';
-  } catch(e) {
-    return null;
-  }
+  } catch(e) { return null; }
 }
 
 async function submitForm() {
   if (!validate()) return;
-
   const btn = document.getElementById('btn-submit');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>Enviando...';
@@ -317,7 +475,6 @@ async function submitForm() {
   const recordId = Date.now();
   const lpn = document.getElementById('f-lpn').value.trim().toUpperCase();
 
-  // Subir fotos primero
   const photoLinks = [];
   for (let i = 0; i < photos.length; i++) {
     const filename = `${lpn}_${recordId}_${i+1}.jpg`;
@@ -341,11 +498,9 @@ async function submitForm() {
     photos: photos.map(p => p.data),
   };
 
-  // Guardar local
   records.unshift(record);
   localStorage.setItem('lpn_records', JSON.stringify(records.slice(0, 200)));
 
-  // Enviar a Sheets
   try {
     const formData = new FormData();
     formData.append('data', JSON.stringify({...record, photos: undefined}));
